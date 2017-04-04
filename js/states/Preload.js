@@ -35,6 +35,9 @@ RPG.PreloadState = {
     this.load.audio('oceans-on-mars', ['assets/audio/oceans-on-mars.mp3', 'assets/audio/oceans-on-mars.ogg'])
   },
   create: function() {
+    var music = this.add.audio('oceans-on-mars', 1, true)
+    music.play()
+    
     this.state.start('Game')
   }
 }
