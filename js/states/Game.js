@@ -1,6 +1,9 @@
 var RPG = RPG || {}
 
 RPG.GameState = {
+  preload: function() {
+    this.music = this.add.audio('oceans-on-mars', 1, true)
+  },
   init: function(currentLevel) {
     //keep track of the current level
     this.currentLevel = currentLevel ? currentLevel : 'map1'
@@ -65,6 +68,8 @@ RPG.GameState = {
 
   },
   loadLevel: function(){
+    this.music.play()
+
     //create a tilemap object
     this.map = this.add.tilemap(this.currentLevel)
 

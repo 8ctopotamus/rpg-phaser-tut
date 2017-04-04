@@ -53,6 +53,11 @@ RPG.Player.prototype.checkQuestCompletion = function(item) {
 	var i = 0
 	var len = this.data.quests.length
 
+	if (len == 0) {
+		alert('You completed all the quests!')
+		return
+	}
+
 	while(i < len) {
 		if (this.data.quests[i].code == item.data.questCode) {
 			this.data.quests[i].isCompleted = true
