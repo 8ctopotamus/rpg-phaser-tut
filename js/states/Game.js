@@ -94,7 +94,7 @@ RPG.GameState = {
       quests: [
         {
           name: 'Find the Magic Scroll',
-          code: 'magic_scroll',
+          code: 'magic-scroll',
           isCompleted: false,
         },
         {
