@@ -6,7 +6,6 @@ RPG.Battle = function(game) {
 
 RPG.Battle.prototype.attack = function(attacker, attacked) {
 	var damage = Math.max(0, attacker.data.attack * Math.random() - attacked.data.defense * Math.random())
-	console.log(damage)
 
 	attacked.data.health -= damage
 	attacked.refreshHealthbar()

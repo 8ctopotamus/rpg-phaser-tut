@@ -33,19 +33,21 @@ RPG.GameState = {
     this.player.body.velocity.x = 0
     this.player.body.velocity.y = 0
 
-    if (this.cursors.left.isDown || this.player.btnsPressed.left || this.player.btnsPressed.upleft || this.player.btnsPressed.downleft) {
-      this.player.body.velocity.x = -this.PLAYER_SPEED
-      this.player.scale.setTo(1, 1)
-    }
-    if (this.cursors.right.isDown || this.player.btnsPressed.right || this.player.btnsPressed.upright || this.player.btnsPressed.downright) {
-      this.player.body.velocity.x = this.PLAYER_SPEED
-      this.player.scale.setTo(-1, 1)
-    }
-    if (this.cursors.up.isDown || this.player.btnsPressed.up || this.player.btnsPressed.upright || this.player.btnsPressed.upleft) {
-      this.player.body.velocity.y = -this.PLAYER_SPEED
-    }
-    if (this.cursors.down.isDown || this.player.btnsPressed.down || this.player.btnsPressed.downright || this.player.btnsPressed.downleft) {
-      this.player.body.velocity.y = this.PLAYER_SPEED
+    if (!this.uiBlocked) {
+      if (this.cursors.left.isDown || this.player.btnsPressed.left || this.player.btnsPressed.upleft || this.player.btnsPressed.downleft) {
+        this.player.body.velocity.x = -this.PLAYER_SPEED
+        this.player.scale.setTo(1, 1)
+      }
+      if (this.cursors.right.isDown || this.player.btnsPressed.right || this.player.btnsPressed.upright || this.player.btnsPressed.downright) {
+        this.player.body.velocity.x = this.PLAYER_SPEED
+        this.player.scale.setTo(-1, 1)
+      }
+      if (this.cursors.up.isDown || this.player.btnsPressed.up || this.player.btnsPressed.upright || this.player.btnsPressed.upleft) {
+        this.player.body.velocity.y = -this.PLAYER_SPEED
+      }
+      if (this.cursors.down.isDown || this.player.btnsPressed.down || this.player.btnsPressed.downright || this.player.btnsPressed.downleft) {
+        this.player.body.velocity.y = this.PLAYER_SPEED
+      }
     }
 
     // stop all movement if nothing is being pressed
@@ -97,7 +99,7 @@ RPG.GameState = {
         },
         {
           name: 'Find the Helmet of the gods',
-          code: 'god-helmet',
+          code: 'gods-helmet',
           isCompleted: false,
         }
       ]
@@ -166,6 +168,37 @@ RPG.GameState = {
     this.defenseLabel.fixedToCamera = true
 
     this.refreshStats()
+
+    // quest button
+    this.questIcon = this.add.sprite(this.game.width - 30, 10, 'quest')
+    this.questIcon.fixedToCamera = true
+
+    // create the Quests overlay
+    this.overlay = this.add.bitmapData(this.game.width, this.game.height)
+    this.overlay.ctx.fillStyle = '#000'
+    this.overlay.ctx.fillRect(0, 0, this.game.width, this.game.height)
+
+    // init quests info panel
+    this.questsPanelGroup = this.add.group()
+    this.questsPanelGroup.y = this.game.height
+    this.questsPanel = new Phaser.Sprite(this.game, 0, 0, this.overlay)
+    this.questsPanel.alpha = 0.8
+    this.questsPanel.fixedToCamera = true
+    this.questsPanelGroup.add(this.questsPanel)
+
+    // content of the panel
+    var style = {font: '14px Arial', fill: '#fff'}
+    this.questsInfo = new Phaser.Text(this.game, 50, 50, '', style)
+    this.questsInfo.fixedToCamera = true
+    this.questsPanelGroup.add(this.questsInfo)
+
+    //show the quests when you touch the quests icon
+    this.questIcon.inputEnabled = true
+    this.questIcon.events.onInputDown.add(this.showQuests, this)
+
+    // hide quest panel when touched
+    this.questsPanel.inputEnabled = true
+    this.questsPanel.events.onInputDown.add(this.hideQuests, this)
   },
   refreshStats: function() {
     this.goldLabel.text = this.player.data.gold
@@ -223,5 +256,30 @@ RPG.GameState = {
       elementObj = new RPG.Enemy(this, element.x, element.y, element.properties.asset, element.properties)
       this.enemies.add(elementObj)
     }, this)
+  },
+  showQuests: function() {
+    this.uiBlocked = true
+    var showPanelTween = this.add.tween(this.questsPanelGroup)
+    showPanelTween.to({y: 0}, 150)
+
+    // show quests when panel reaches the top
+    showPanelTween.onComplete.add(function(){
+      //show all quests
+      var questsText = 'QUESTS \n'
+
+      // iterate through all quests
+      this.player.data.quests.forEach(function(quest) {
+        questsText += quest.name + (quest.isCompleted ? '- DONE' : '') + '\n'
+      }, this)
+
+      this.questsInfo.text = questsText
+    }, this)
+
+    showPanelTween.start()
+  },
+  hideQuests: function() {
+    this.questsPanelGroup.y = this.game.height
+    this.questsInfo.text = ''
+    this.uiBlocked = false
   },
 }

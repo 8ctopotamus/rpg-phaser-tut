@@ -1317,7 +1317,7 @@
     <property name="type" value="item"/>
    </properties>
   </object>
-  <object gid="16" x="104" y="694">
+  <object gid="16" x="100" y="691">
    <properties>
     <property name="asset" value="strangeItem"/>
     <property name="isQuest" value="1"/>
